@@ -1,0 +1,104 @@
+# See: https://arduino.github.io/arduino-cli/latest/platform-specification/
+
+menu.pnum=Board part number
+
+menu.xserial=U(S)ART support
+menu.usb=USB support (if available)
+menu.xusb=USB speed (if available)
+menu.virtio=Virtual serial support
+
+menu.opt=Optimize
+menu.dbg=Debug symbols
+menu.rtlib=C Runtime Library
+menu.upload_method=Upload method
+
+
+###############################
+# Generic F0
+GenF0.name=Generic CW32F0 series
+
+GenF0.build.core=arduino
+GenF0.build.board=GenF0
+GenF0.build.mcu=cortex-m0plus
+GenF0.build.series=CW32F0xx
+GenF0.build.extra_flags=-D{build.product_line} {build.enable_usb} {build.xSerial}
+
+# Generic F030C8Tx
+GenF0.menu.pnum.GENERIC_F030C8TX=Generic F030C8Tx
+GenF0.menu.pnum.GENERIC_F030C8TX.upload.maximum_size=65536
+GenF0.menu.pnum.GENERIC_F030C8TX.upload.maximum_data_size=8192
+GenF0.menu.pnum.GENERIC_F030C8TX.build.board=GENERIC_F030C8TX
+GenF0.menu.pnum.GENERIC_F030C8TX.build.product_line=CW32F030x8
+GenF0.menu.pnum.GENERIC_F030C8TX.build.variant=CW32F0xx/F030C8T
+
+# Upload menu
+GenF0.menu.upload_method.swdMethod=STM32CubeProgrammer (SWD)
+GenF0.menu.upload_method.swdMethod.upload.protocol=0
+GenF0.menu.upload_method.swdMethod.upload.options=-g
+GenF0.menu.upload_method.swdMethod.upload.tool=stm32CubeProg
+
+GenF0.menu.upload_method.serialMethod=STM32CubeProgrammer (Serial)
+GenF0.menu.upload_method.serialMethod.upload.protocol=1
+GenF0.menu.upload_method.serialMethod.upload.options={serial.port.file} -s
+GenF0.menu.upload_method.serialMethod.upload.tool=stm32CubeProg
+
+GenF0.menu.upload_method.dfuMethod=STM32CubeProgrammer (DFU)
+GenF0.menu.upload_method.dfuMethod.upload.protocol=2
+GenF0.menu.upload_method.dfuMethod.upload.options=-g
+GenF0.menu.upload_method.dfuMethod.upload.tool=stm32CubeProg
+
+# Serialx activation
+
+GenF1.menu.xserial.generic=Enabled (generic 'Serial')
+GenF1.menu.xserial.none=Enabled (no generic 'Serial')
+GenF1.menu.xserial.none.build.xSerial=-DHAL_UART_MODULE_ENABLED -DHWSERIAL_NONE
+GenF1.menu.xserial.disabled=Disabled (no Serial support)
+GenF1.menu.xserial.disabled.build.xSerial=
+
+# USB connectivity
+
+GenF0.menu.usb.none=None
+GenF0.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
+GenF0.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
+GenF0.menu.usb.CDC=CDC (no generic 'Serial')
+GenF0.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
+GenF0.menu.usb.HID=HID (keyboard and mouse)
+GenF0.menu.usb.HID.build.enable_usb={build.usb_flags} -DUSBD_USE_HID_COMPOSITE
+
+# Optimizations
+
+GenF0.menu.opt.osstd=Smallest (-Os default)
+GenF0.menu.opt.oslto=Smallest (-Os) with LTO
+GenF0.menu.opt.oslto.build.flags.optimize=-Os -flto
+GenF0.menu.opt.o1std=Fast (-O1)
+GenF0.menu.opt.o1std.build.flags.optimize=-O1
+GenF0.menu.opt.o1lto=Fast (-O1) with LTO
+GenF0.menu.opt.o1lto.build.flags.optimize=-O1 -flto
+GenF0.menu.opt.o2std=Faster (-O2)
+GenF0.menu.opt.o2std.build.flags.optimize=-O2
+GenF0.menu.opt.o2lto=Faster (-O2) with LTO
+GenF0.menu.opt.o2lto.build.flags.optimize=-O2 -flto
+GenF0.menu.opt.o3std=Fastest (-O3)
+GenF0.menu.opt.o3std.build.flags.optimize=-O3
+GenF0.menu.opt.o3lto=Fastest (-O3) with LTO
+GenF0.menu.opt.o3lto.build.flags.optimize=-O3 -flto
+GenF0.menu.opt.ogstd=Debug (-Og)
+GenF0.menu.opt.ogstd.build.flags.optimize=-Og
+
+# Debug information
+
+GenF0.menu.dbg.none=None
+GenF0.menu.dbg.enable=Enabled (-g)
+GenF0.menu.dbg.enable.build.flags.debug=-g
+
+# C Runtime Library
+
+GenF0.menu.rtlib.nano=Newlib Nano (default)
+GenF0.menu.rtlib.nanofp=Newlib Nano + Float Printf
+GenF0.menu.rtlib.nanofp.build.flags.ldspecs=--specs=nano.specs -u _printf_float
+GenF0.menu.rtlib.nanofs=Newlib Nano + Float Scanf
+GenF0.menu.rtlib.nanofs.build.flags.ldspecs=--specs=nano.specs -u _scanf_float
+GenF0.menu.rtlib.nanofps=Newlib Nano + Float Printf/Scanf
+GenF0.menu.rtlib.nanofps.build.flags.ldspecs=--specs=nano.specs -u _printf_float -u _scanf_float
+GenF0.menu.rtlib.full=Newlib Standard
+GenF0.menu.rtlib.full.build.flags.ldspecs=
