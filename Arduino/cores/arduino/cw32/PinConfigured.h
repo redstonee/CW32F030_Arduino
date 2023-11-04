@@ -26,6 +26,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************
+ Modified 1 may 2023 by TempersLee
  */
 #ifndef _PINCONFIGURED_H
 #define _PINCONFIGURED_H
@@ -36,10 +37,10 @@
 extern "C" {
 #endif
 
-#define PINCONF_INDEX(X) (STM_PORT(X)-FirstPort)
+#define PINCONF_INDEX(X) (CH_PORT(X)-FirstPort)
 
 #define PINCONF_MASK     0x01
-#define PINCONF_SHIFT(X) (STM_PIN(X))
+#define PINCONF_SHIFT(X) (CH_PIN(X))
 #define PINCONF_BIT(X)   (PINCONF_MASK << PINCONF_SHIFT(X))
 
 #define PINCONF_VAL(X, Y)   ((Y >> PINCONF_SHIFT(X)) & PINCONF_MASK)

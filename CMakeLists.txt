@@ -15,7 +15,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 # Set the source directories
-set(ARDUINO_SYS_DIR ${CMAKE_CURRENT_LIST_DIR}/Arduino/system)
+set(ARDUINO_SYS_DIR ${CMAKE_CURRENT_LIST_DIR}/Arduino/system/CW32F030)
 set(ARDUINO_VAR_DIR ${CMAKE_CURRENT_LIST_DIR}/Arduino/variants/CW32F0xx/F030C8T)
 set(ARDUINO_CORE_DIR ${CMAKE_CURRENT_LIST_DIR}/Arduino/cores/arduino)
 set(HW_SRC_DIR ${ARDUINO_SYS_DIR}/Hardware/src)
@@ -27,9 +27,13 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 
 include_directories(${ARDUINO_SYS_DIR}/Hardware/inc)
 include_directories(${ARDUINO_SYS_DIR}/CMSIS/Core/Include)
+include_directories(${ARDUINO_SYS_DIR}/CMSIS/Device/CW/CW32F0xx/Include)
 include_directories(${ARDUINO_CORE_DIR})
 include_directories(${ARDUINO_CORE_DIR}/avr)
 include_directories(${ARDUINO_CORE_DIR}/cw32)
+include_directories(${ARDUINO_CORE_DIR}/cw32/lib)
+include_directories(${ARDUINO_VAR_DIR})
+
 
 
 
@@ -62,13 +66,11 @@ set (HW_SRCS
         ${HW_SRC_DIR}/cw32f030_vc.c
         ${HW_SRC_DIR}/cw32f030_wwdt.c
         ${HW_SRC_DIR}/system_cw32f030.c
-        ${HW_SRC_DIR}/startup_cw32f030.s
         ${HW_SRC_DIR}/interrupts_cw32f030.c
 )
 
 set (ARDUINO_VARIANT_SRCS
-        ${ARDUINO_SYS_DIR}/Hardware/variants/arduino_cw32f030/variant.cpp
-        ${ARDUINO_VAR_DIR}/variant.cpp
+        ${ARDUINO_VAR_DIR}/variant_generic.cpp
         ${ARDUINO_VAR_DIR}/PeripheralPins.c
         ${ARDUINO_VAR_DIR}/generic_clock.c
 )
@@ -76,29 +78,39 @@ set (ARDUINO_VARIANT_SRCS
 set(ARDUINO_CORE_SRCS
         ${ARDUINO_CORE_DIR}/abi.cpp
         ${ARDUINO_CORE_DIR}/board.c
+        ${ARDUINO_CORE_DIR}/core_debug.c
         ${ARDUINO_CORE_DIR}/HardwareSerial.cpp
         # ${ARDUINO_CORE_DIR}/HardwareTimer.cpp
-        ${ARDUINO_CORE_DIR}/hooks.c
-        ${ARDUINO_CORE_DIR}/IPAddress.cpp
-        ${ARDUINO_CORE_DIR}/itoa.c
+        # ${ARDUINO_CORE_DIR}/hooks.c
+        # ${ARDUINO_CORE_DIR}/IPAddress.cpp
+        ${ARDUINO_CORE_DIR}/itoa.cpp
         ${ARDUINO_CORE_DIR}/main.cpp
-        ${ARDUINO_CORE_DIR}/new.cpp
-        ${ARDUINO_CORE_DIR}/pins_arduino.c
+        # ${ARDUINO_CORE_DIR}/new.cpp
+        ${ARDUINO_CORE_DIR}/pins_arduino.cpp
         ${ARDUINO_CORE_DIR}/Print.cpp
-        ${ARDUINO_CORE_DIR}/RingBuffer.cpp
+        # ${ARDUINO_CORE_DIR}/RingBuffer.cpp
         ${ARDUINO_CORE_DIR}/Stream.cpp
-        ${ARDUINO_CORE_DIR}/Tone.cpp
-        ${ARDUINO_CORE_DIR}/USBSerial.cpp
-        ${ARDUINO_CORE_DIR}/VirtIOS
-        ${ARDUINO_CORE_DIR}/WInterrupts.c
-        ${ARDUINO_CORE_DIR}/wiring_analog.c
+        # ${ARDUINO_CORE_DIR}/Tone.cpp
+        ${ARDUINO_CORE_DIR}/WInterrupts.cpp
+        # ${ARDUINO_CORE_DIR}/wiring_analog.c
         ${ARDUINO_CORE_DIR}/wiring_digital.c
-        ${ARDUINO_CORE_DIR}/wiring_pulse.c
+        ${ARDUINO_CORE_DIR}/wiring_pulse.cpp
         ${ARDUINO_CORE_DIR}/wiring_shift.c
+        ${ARDUINO_CORE_DIR}/wiring_time.c
         ${ARDUINO_CORE_DIR}/WMath.cpp
-        ${ARDUINO_CORE_DIR}/WSerial.cpp
+        # ${ARDUINO_CORE_DIR}/WSerial.cpp
         ${ARDUINO_CORE_DIR}/WString.cpp
         ${ARDUINO_CORE_DIR}/avr/dtostrf.c
+        # ${ARDUINO_CORE_DIR}/cw32/analog.cpp
+        ${ARDUINO_CORE_DIR}/cw32/clock.c
+        ${ARDUINO_CORE_DIR}/cw32/cw32_def.c
+        ${ARDUINO_CORE_DIR}/cw32/hw_config.c
+        # ${ARDUINO_CORE_DIR}/cw32/interrupt.cpp
+        ${ARDUINO_CORE_DIR}/cw32/pinmap.c
+        ${ARDUINO_CORE_DIR}/cw32/PortNames.c
+        ${ARDUINO_CORE_DIR}/cw32/uart.c
+        ${ARDUINO_CORE_DIR}/cw32/startup_cw32yyxx.s
+        ${ARDUINO_CORE_DIR}/cw32/cw32_def.c
 
 )
 
@@ -109,11 +121,18 @@ set (USER_SRCS
 add_executable(${CMAKE_PROJECT_NAME}.elf 
         ${HW_SRCS}
         ${USER_SRCS}
+        ${ARDUINO_CORE_SRCS}
+        ${ARDUINO_VARIANT_SRCS}
 )
 
 add_compile_definitions(
         USE_STDPERIPH_DRIVER
+        CW32F0xx
+        CW32F030
+        VARIANT_H="variant_generic.h"
 )
+
+add_compile_options(--specs=nano.specs -u _printf_float -u _scanf_float)
 
 set(LD_SCRIPT_PATH ${CMAKE_CURRENT_LIST_DIR}/ldscript.ld)
 get_filename_component(LD_SCRIPT_PATH_ABS ${LD_SCRIPT_PATH} ABSOLUTE)
@@ -125,15 +144,23 @@ set_target_properties(${CMAKE_PROJECT_NAME}.elf PROPERTIES
         LINK_FLAGS "-T \"${LD_SCRIPT_PATH_ABS}\""
 )
 
-add_custom_target(
-        createBinFile ALL
-        ${TOOLCHAIN_PREFIX}/bin/${TOOLCHAIN}-objcopy -Obinary
-        "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.elf"
-        "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin"
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.elf
-)
 
 add_custom_target(
         showSize ALL
         ${TOOLCHAIN_PREFIX}/bin/${TOOLCHAIN}-size "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.elf"
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.elf)
+
+        
+find_program(PYOCD_FOUND pyocd)
+
+if(PYOCD_FOUND)
+        add_custom_target(BuildAndFlash COMMAND DEPENDS flash-cmd)
+        add_custom_command(
+                USES_TERMINAL 
+                OUTPUT flash-cmd
+                COMMAND pyocd load ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.elf -t cw32f030c8 # Modify this to match your target
+                DEPENDS showSize
+        )
+else()
+        message(WARNING "pyocd not found, flashing will not be available")
+endif()

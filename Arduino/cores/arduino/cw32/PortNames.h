@@ -26,11 +26,13 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************
+ Modified 1 may 2023 by TempersLee
  */
 #ifndef _PORTNAMES_H
 #define _PORTNAMES_H
 
-#include "stm32_def.h"
+#include<cw32yyxx.h>
+#include<cw32yyxx_rcc.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,7 +43,9 @@ extern GPIO_TypeDef *GPIOPort[];
 typedef enum {
   FirstPort = 0x00,
   PortA = FirstPort,
+#if defined GPIOB_BASE
   PortB,
+#endif
 #if defined GPIOC_BASE
   PortC,
 #endif

@@ -33,6 +33,7 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
+  Modified 1 may 2023 by TempersLee
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -64,4 +65,3 @@ void CoreCallback(void);
 #endif // CORE_CALLBACK
 #endif /* __CALLBACK_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

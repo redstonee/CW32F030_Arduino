@@ -33,44 +33,20 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
+  Modified 1 may 2023 by TempersLee
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __INTERRUPT_H
 #define __INTERRUPT_H
 
+
 /* Includes ------------------------------------------------------------------*/
-#include "stm32_def.h"
+#include "cw32_def.h"
+#include "Arduino.h"
 
-#if !defined(HAL_EXTI_MODULE_DISABLED)
-
-  #if defined(STM32F3xx)
-    #define EXTI2_IRQn    EXTI2_TSC_IRQn
-  #endif
-
-  #ifndef EXTI_IRQ_PRIO
-    #if (__CORTEX_M == 0x00U)
-      #define EXTI_IRQ_PRIO       3
-    #else
-      #define EXTI_IRQ_PRIO       6
-    #endif /* __CORTEX_M */
-  #endif /* EXTI_IRQ_PRIO */
-  #ifndef EXTI_IRQ_SUBPRIO
-    #define EXTI_IRQ_SUBPRIO    0
-  #endif
-
-  #ifdef __cplusplus
-    #include <functional>
-
-    typedef std::function<void(void)> callback_function_t;
-    void stm32_interrupt_enable(GPIO_TypeDef *port, uint16_t pin, callback_function_t callback, uint32_t mode);
-  #endif
-
-  /* Exported functions ------------------------------------------------------- */
-  void stm32_interrupt_enable(GPIO_TypeDef *port, uint16_t pin, void (*callback)(void), uint32_t mode);
-  void stm32_interrupt_disable(GPIO_TypeDef *port, uint16_t pin);
-#endif /* !HAL_EXTI_MODULE_DISABLED */
+/* Exported functions ------------------------------------------------------- */
+void cw32_interrupt_disable(GPIO_TypeDef *port, uint16_t pin);
+void cw32_interrupt_enable(GPIO_TypeDef *port, uint16_t pin, void (*callback)(void), uint32_t trigger_mode);
 
 #endif /* __INTERRUPT_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,9 +1,9 @@
-/*
+/**
  *******************************************************************************
- * Copyright (c) 2016-2021, STMicroelectronics
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
  * All rights reserved.
  *
- * This software component is licensed by ST under BSD 3-Clause license,
+ * This software component is licensed by WCH under BSD 3-Clause license,
  * the "License"; You may not use this file except in compliance with the
  * License. You may obtain a copy of the License at:
  *                        opensource.org/licenses/BSD-3-Clause
@@ -16,30 +16,23 @@
 #define __CLOCK_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32_def.h"
+#include "cw32_def.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Exported types ------------------------------------------------------------*/
-/* Clock source selection */
-typedef enum {
-  LSI_CLOCK,
-  HSI_CLOCK,
-  LSE_CLOCK,
-  HSE_CLOCK
-} sourceClock_t;
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+WEAK uint64_t GetTick(void);
 uint32_t getCurrentMillis(void);
 uint32_t getCurrentMicros(void);
 
-void configIPClock(void);
-void enableClock(sourceClock_t source);
-void configHSECapacitorTuning(void);
+// void configIPClock(void);
+// void enableClock(sourceClock_t source);
+// void configHSECapacitorTuning(void);
 
 #ifdef __cplusplus
 }
@@ -47,4 +40,4 @@ void configHSECapacitorTuning(void);
 
 #endif /* __CLOCK_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

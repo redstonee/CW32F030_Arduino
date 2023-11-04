@@ -19,13 +19,15 @@
   Modified 28 September 2010 by Mark Sproul
   Modified 14 August 2012 by Alarus
   Modified 3 December 2013 by Matthijs Kooijman
+  Modified 1 may 2023 by TempersLee
 */
 
 #ifndef HardwareSerial_h
 #define HardwareSerial_h
 
-#include <inttypes.h>
+#if 1
 
+#include <inttypes.h>
 #include "Stream.h"
 #include "uart.h"
 
@@ -67,65 +69,55 @@ typedef enum {
 } HalfDuplexMode_t;
 
 // Define config for Serial.begin(baud, config);
-// below configs are not supported by STM32
-//#define SERIAL_5N1 0x00
-//#define SERIAL_5N2 0x08
-//#define SERIAL_5E1 0x20
-//#define SERIAL_5E2 0x28
-//#define SERIAL_5O1 0x30
-//#define SERIAL_5O2 0x38
-//#define SERIAL_6N1 0x02
-//#define SERIAL_6N2 0x0A
+/* databits 8 */
+#define SERIAL_8N1      0x02     
+#define SERIAL_8N2      0x0A
+#define SERIAL_8N0_5    0x06
+#define SERIAL_8N1_5    0x0E
+#define SERIAL_8E1      0x22
+#define SERIAL_8E2      0x2A
+#define SERIAL_8E0_5    0x26
+#define SERIAL_8E1_5    0x2E
+#define SERIAL_8O1      0x32
+#define SERIAL_8O2      0x3A
+#define SERIAL_8O0_5    0x36
+#define SERIAL_8O1_5    0x3E
+/* databits 9 */
+#define SERIAL_9N1      0x03 
+#define SERIAL_9N2      0x0B
+#define SERIAL_9N0_5    0x07
+#define SERIAL_9N1_5    0x0F
+#define SERIAL_9E1      0x23
+#define SERIAL_9E2      0x2B
+#define SERIAL_9E0_5    0x27 
+#define SERIAL_9E1_5    0x2F
+#define SERIAL_9O1      0x33 
+#define SERIAL_9O2      0x3B
+#define SERIAL_9O0_5    0x37
+#define SERIAL_9O1_5    0x3F  
 
-#ifdef UART_WORDLENGTH_7B
-  #define SERIAL_7N1 0x04
-  #define SERIAL_7N2 0x0C
-  #define SERIAL_6E1 0x22
-  #define SERIAL_6E2 0x2A
-  #define SERIAL_6O1 0x32
-  #define SERIAL_6O2 0x3A
-#endif
-#define SERIAL_8N1 0x06
-#define SERIAL_8N2 0x0E
-#define SERIAL_7E1 0x24
-#define SERIAL_8E1 0x26
-#define SERIAL_7E2 0x2C
-#define SERIAL_8E2 0x2E
-#define SERIAL_7O1 0x34
-#define SERIAL_8O1 0x36
-#define SERIAL_7O2 0x3C
-#define SERIAL_8O2 0x3E
+
+
 
 class HardwareSerial : public Stream {
-  protected:
-    // Has any byte been written to the UART since begin()
-    bool _written;
 
-    // Don't put any members after these buffers, since only the first
-    // 32 bytes of this struct can be accessed quickly using the ldd
-    // instruction.
-    unsigned char _rx_buffer[SERIAL_RX_BUFFER_SIZE];
-    unsigned char _tx_buffer[SERIAL_TX_BUFFER_SIZE];
-
-    serial_t _serial;
-
-  public:
-    HardwareSerial(uint32_t _rx, uint32_t _tx);
-    HardwareSerial(PinName _rx, PinName _tx);
-    HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex = HALF_DUPLEX_DISABLED);
-    HardwareSerial(uint32_t _rxtx);
-    HardwareSerial(PinName _rxtx);
+  serial_t _serial;  
+public:
+    HardwareSerial(void *peripheral); 
+    
     void begin(unsigned long baud)
     {
-      begin(baud, SERIAL_8N1);
+      begin(baud, SERIAL_8N1);     //SERIAL_9E1_5  SERIAL_8N1
     }
     void begin(unsigned long, uint8_t);
     void end();
+
     virtual int available(void);
     virtual int peek(void);
     virtual int read(void);
-    int availableForWrite(void);
-    virtual void flush(void);
+
+
+    
     virtual size_t write(uint8_t);
     inline size_t write(unsigned long n)
     {
@@ -155,32 +147,28 @@ class HardwareSerial : public Stream {
     void setRx(PinName _rx);
     void setTx(PinName _tx);
 
-    // Enable half-duplex mode by setting the Rx pin to NC
-    // This needs to be done before the call to begin()
-    void setHalfDuplex(void);
-    bool isHalfDuplex(void) const;
-    void enableHalfDuplexRx(void);
-
-    friend class STM32LowPower;
-
-    // Interrupt handlers
-    static void _rx_complete_irq(serial_t *obj);
-    static int _tx_complete_irq(serial_t *obj);
+    // Enable HW flow control on RTS, CTS or both
+    void setRts(uint32_t _rts);
+    void setCts(uint32_t _cts);
+    void setRtsCts(uint32_t _rts, uint32_t _cts);
+    void setRts(PinName _rts);
+    void setCts(PinName _cts);
+    void setRtsCts(PinName _rts, PinName _cts);
+    void setHandler(void *handler);
   private:
-    bool _rx_enabled;
     uint8_t _config;
     unsigned long _baud;
-    void init(PinName _rx, PinName _tx);
-    void configForLowPower(void);
+    void init(PinName _rx, PinName _tx, PinName _rts = NC, PinName _cts = NC);
 };
 
-#if defined(USART1)
+
+#if defined(UART1)
   extern HardwareSerial Serial1;
 #endif
-#if defined(USART2)
+#if defined(UART2)
   extern HardwareSerial Serial2;
 #endif
-#if defined(USART3)
+#if defined(UART3)
   extern HardwareSerial Serial3;
 #endif
 #if defined(UART4) || defined(USART4)
@@ -198,16 +186,27 @@ class HardwareSerial : public Stream {
 #if defined(UART8) || defined(USART8)
   extern HardwareSerial Serial8;
 #endif
-#if defined(UART9)
-  extern HardwareSerial Serial9;
+
+
+
+#else
+
+
+
+
+
+
+
 #endif
-#if defined(UART10) || defined(USART10)
-  extern HardwareSerial Serial10;
-#endif
-#if defined(LPUART1)
-  extern HardwareSerial SerialLP1;
-#endif
-#if defined(LPUART2)
-  extern HardwareSerial SerialLP2;
-#endif
+
+
+
+
+
+
+
+
+
+
+
 #endif

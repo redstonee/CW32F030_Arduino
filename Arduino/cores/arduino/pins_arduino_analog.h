@@ -1,9 +1,9 @@
 /*
  *******************************************************************************
- * Copyright (c) 2020, STMicroelectronics
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
  * All rights reserved.
  *
- * This software component is licensed by ST under BSD 3-Clause license,
+ * This software component is licensed by WCH under BSD 3-Clause license,
  * the "License"; You may not use this file except in compliance with the
  * License. You may obtain a copy of the License at:
  *                        opensource.org/licenses/BSD-3-Clause
@@ -41,7 +41,7 @@
 
 /* ADC internal channels (not a pins) */
 /* Only used for analogRead() */
-#if defined(ADC_CHANNEL_TEMPSENSOR) || defined(ADC_CHANNEL_TEMPSENSOR_ADC1)
+#if defined(ADC_CHANNEL_TEMPSENSOR)
   #define ATEMP        (NUM_ANALOG_INTERNAL_FIRST)
 #endif
 #ifdef ADC_CHANNEL_VREFINT
@@ -50,9 +50,7 @@
 #ifdef ADC_CHANNEL_VBAT
   #define AVBAT        (NUM_ANALOG_INTERNAL_FIRST + 2)
 #endif
-#if defined(ADC5) && defined(ADC_CHANNEL_TEMPSENSOR_ADC5)
-  #define ATEMP_ADC5   (NUM_ANALOG_INTERNAL_FIRST + 3)
-#endif
+
 
 /* If NUM_ANALOG_INPUTS is not defined there is no analog pins defined. */
 /* Anyway ADC internal channels are always available. */

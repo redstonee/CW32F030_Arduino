@@ -24,9 +24,6 @@
 
 #include "Print.h"
 
-#if defined (VIRTIO_LOG)
-  #include "virtio_log.h"
-#endif
 
 // Public Methods //////////////////////////////////////////////////////////////
 
@@ -236,18 +233,15 @@ size_t Print::println(const Printable &x)
 }
 
 extern "C" {
-  __attribute__((weak))
+   __attribute__((weak))
   int _write(int file, char *ptr, int len)
   {
     switch (file) {
       case STDOUT_FILENO:
       case STDERR_FILENO:
-        /* Used for core_debug() */
-#if defined (VIRTIO_LOG)
-        virtio_log((uint8_t *)ptr, (uint32_t)len);
-#elif defined(HAL_UART_MODULE_ENABLED) && !defined(HAL_UART_MODULE_ONLY)
+        #if defined(UART_MODULE_ENABLED) && !defined(UART_MODULE_ONLY)
         uart_debug_write((uint8_t *)ptr, (uint32_t)len);
-#endif
+        #endif
         break;
       case STDIN_FILENO:
         break;
@@ -263,18 +257,32 @@ int Print::printf(const char *format, ...)
 {
   va_list ap;
   va_start(ap, format);
-  return vdprintf((int)this, format, ap);
+  int retval = vdprintf((int)this, format, ap);
+  va_end(ap);
+  return retval;
 }
 
 int Print::printf(const __FlashStringHelper *format, ...)
 {
   va_list ap;
   va_start(ap, format);
+  int retval = vdprintf((int)this, (const char *)format, ap);
+  va_end(ap);
+  return retval;
+}
+
+int Print::vprintf(const char *format, va_list ap)
+{
+  return vdprintf((int)this, format, ap);
+}
+
+int Print::vprintf(const __FlashStringHelper *format, va_list ap)
+{
   return vdprintf((int)this, (const char *)format, ap);
 }
 
-// Private Methods /////////////////////////////////////////////////////////////
 
+// Private Methods /////////////////////////////////////////////////////////////
 size_t Print::printNumber(unsigned long n, uint8_t base)
 {
   char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.

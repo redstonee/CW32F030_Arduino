@@ -31,6 +31,7 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
+  Modified 1 may 2023 by TempersLee
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -38,203 +39,67 @@
 #define __UART_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32_def.h"
+#include "cw32_def.h"
 #include "PinNames.h"
+#include "variant.h"
+#include <cw32yyxx_uart.h>
+#include <cw32yyxx.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-#if !defined(HAL_UART_MODULE_ENABLED) || defined(HAL_UART_MODULE_ONLY)
-#define serial_t void*
-#else
+#if defined(UART_MODULE_ENABLED)
+
+  typedef struct __UART_HandleTypeDef
+  {
+    USART_TypeDef *Instance;
+    USART_InitTypeDef init;
+  } UART_HandleTypeDef;
 
 #ifndef UART_IRQ_PRIO
-#define UART_IRQ_PRIO       1
+#define UART_IRQ_PRIO (0x80)
 #endif
 #ifndef UART_IRQ_SUBPRIO
-#define UART_IRQ_SUBPRIO    0
+#define UART_IRQ_SUBPRIO (0x00)
 #endif
 
-/* Exported types ------------------------------------------------------------*/
-typedef struct serial_s serial_t;
+  typedef struct serial_s serial_t;
+  struct serial_s
+  {
+    USART_TypeDef *uart;
+    UART_HandleTypeDef handle;
+    PinName pin_tx;
+    PinName pin_rx;
+    PinName pin_rts;
+    PinName pin_cts;
+    IRQn_Type irq;
+    uint8_t index;
+  };
 
-struct serial_s {
-  /*  The 1st 2 members USART_TypeDef *uart
-   *  and UART_HandleTypeDef handle should
-   *  be kept as the first members of this struct
-   *  to have get_serial_obj() function work as expected
-   */
-  USART_TypeDef *uart;
-  UART_HandleTypeDef handle;
-  void (*rx_callback)(serial_t *);
-  int (*tx_callback)(serial_t *);
-  PinName pin_tx;
-  PinName pin_rx;
-  IRQn_Type irq;
-  uint8_t index;
-  uint8_t recv;
-  uint8_t *rx_buff;
-  uint8_t *tx_buff;
-  uint16_t rx_tail;
-  uint16_t tx_head;
-  volatile uint16_t rx_head;
-  volatile uint16_t tx_tail;
-  size_t tx_size;
-};
+#define TX_TIMEOUT 1000
 
-/* Exported constants --------------------------------------------------------*/
-#define TX_TIMEOUT  1000
+  /* Exported macro ------------------------------------------------------------*/
+  /* Exported functions ------------------------------------------------------- */
+  void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t parity, uint32_t stopbits);
+  void uart_deinit(serial_t *obj);
 
-#if defined(USART2_BASE) && !defined(USART2_IRQn)
-#if defined(STM32G0xx)
-#if defined(LPUART2_BASE)
-#define USART2_IRQn USART2_LPUART2_IRQn
-#define USART2_IRQHandler USART2_LPUART2_IRQHandler
-#endif
-#endif /* STM32G0xx */
-#endif
+  int uart_getc(serial_t *obj, unsigned char *c);
 
-#if defined(USART3_BASE) && !defined(USART3_IRQn)
-#if defined(STM32F0xx)
-#if defined(STM32F091xC) || defined (STM32F098xx)
-#define USART3_IRQn USART3_8_IRQn
-#define USART3_IRQHandler USART3_8_IRQHandler
-#elif defined(STM32F030xC)
-#define USART3_IRQn USART3_6_IRQn
-#define USART3_IRQHandler USART3_6_IRQHandler
+  uint8_t serial_tx_active(serial_t *obj);
+  uint8_t serial_rx_active(serial_t *obj);
+
+  size_t uart_debug_write(uint8_t *data, uint32_t size);
+
 #else
-#define USART3_IRQn USART3_4_IRQn
-#define USART3_IRQHandler USART3_4_IRQHandler
-#endif /* STM32F091xC || STM32F098xx */
-#elif defined(STM32G0xx)
-#if defined(LPUART2_BASE)
-#define USART3_IRQn USART3_4_5_6_LPUART1_IRQn
-#define USART3_IRQHandler USART3_4_5_6_LPUART1_IRQHandler
-#elif defined(LPUART1_BASE)
-#define USART3_IRQn USART3_4_LPUART1_IRQn
-#define USART3_IRQHandler USART3_4_LPUART1_IRQHandler
-#else
-#define USART3_IRQn USART3_4_IRQn
-#define USART3_IRQHandler USART3_4_IRQHandler
-#endif
-#endif /* STM32F0xx */
-#endif
 
-#if defined(USART4_BASE) && !defined(USART4_IRQn)
-#if defined(STM32F0xx)
-/* IRQHandler is mapped on USART3_IRQHandler for STM32F0xx */
-#if defined(STM32F091xC) || defined (STM32F098xx)
-#define USART4_IRQn USART3_8_IRQn
-#elif defined(STM32F030xC)
-#define USART4_IRQn USART3_6_IRQn
-#else
-#define USART4_IRQn USART3_4_IRQn
-#endif /* STM32F091xC || STM32F098xx */
-#elif defined(STM32L0xx)
-#define USART4_IRQn USART4_5_IRQn
-#elif defined(STM32G0xx)
-#if defined(LPUART2_BASE)
-#define USART4_IRQn USART3_4_5_6_LPUART1_IRQn
-#elif defined(LPUART1_BASE)
-#define USART4_IRQn USART3_4_LPUART1_IRQn
-#else
-#define USART4_IRQn USART3_4_IRQn
-#endif
-#endif /* STM32G0xx */
-#endif
+#define serial_t void *
 
-#if defined(USART5_BASE) && !defined(USART5_IRQn)
-#if defined(STM32F0xx)
-/* IRQHandler is mapped on USART3_IRQHandler for STM32F0xx */
-#if defined(STM32F091xC) || defined (STM32F098xx)
-#define USART5_IRQn USART3_8_IRQn
-#elif defined(STM32F030xC)
-#define USART5_IRQn USART3_6_IRQn
-#endif /* STM32F091xC || STM32F098xx */
-#elif defined(STM32G0xx)
-#if defined(LPUART2_BASE)
-#define USART5_IRQn USART3_4_5_6_LPUART1_IRQn
-#endif
-#elif defined(STM32L0xx)
-#define USART5_IRQn USART4_5_IRQn
-#endif /* STM32F0xx */
-#endif
+#endif /* UART_MODULE_ENABLED  */
 
-/* IRQHandler is mapped on USART3_IRQHandler for STM32F0xx */
-#if defined(USART6_BASE) && !defined(USART6_IRQn)
-#if defined (STM32F0xx)
-#if defined(STM32F091xC) || defined (STM32F098xx)
-#define USART6_IRQn USART3_8_IRQn
-#elif defined(STM32F030xC)
-#define USART6_IRQn USART3_6_IRQn
-#endif /* STM32F091xC || STM32F098xx */
-#elif defined(STM32G0xx)
-#if defined(LPUART2_BASE)
-#define USART6_IRQn USART3_4_5_6_LPUART1_IRQn
-#endif
-#endif /* STM32F0xx */
-#endif
-
-#if defined(USART7_BASE) && !defined(USART7_IRQn)
-#if defined (STM32F0xx)
-#if defined(STM32F091xC) || defined (STM32F098xx)
-#define USART7_IRQn USART3_8_IRQn
-#endif /* STM32F091xC || STM32F098xx */
-#endif /* STM32F0xx */
-#endif
-
-#if defined(USART8_BASE) && !defined(USART8_IRQn)
-#if defined (STM32F0xx)
-#if defined(STM32F091xC) || defined (STM32F098xx)
-#define USART8_IRQn USART3_8_IRQn
-#endif /* STM32F091xC || STM32F098xx */
-#endif /* STM32F0xx */
-#endif
-
-#if defined(LPUART1_BASE) && !defined(LPUART1_IRQn)
-#if defined(STM32G0xx)
-#if defined(LPUART2_BASE)
-#define LPUART1_IRQn USART3_4_5_6_LPUART1_IRQn
-#elif defined(USART3_BASE)
-#define LPUART1_IRQn USART3_4_LPUART1_IRQn
-#endif
-#endif /* STM32G0xx */
-#endif
-
-#if defined(LPUART2_BASE) && !defined(LPUART2_IRQn)
-#if defined(STM32G0xx)
-#if defined(LPUART2_BASE)
-#define LPUART2_IRQn USART2_LPUART2_IRQn
-#endif
-#endif /* STM32G0xx */
-#endif
-
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t parity, uint32_t stopbits);
-void uart_deinit(serial_t *obj);
-#if defined(HAL_PWR_MODULE_ENABLED) && (defined(UART_IT_WUF) || defined(LPUART1_BASE))
-void uart_config_lowpower(serial_t *obj);
-#endif
-size_t uart_write(serial_t *obj, uint8_t data, uint16_t size);
-int uart_getc(serial_t *obj, unsigned char *c);
-void uart_attach_rx_callback(serial_t *obj, void (*callback)(serial_t *));
-void uart_attach_tx_callback(serial_t *obj, int (*callback)(serial_t *), size_t size);
-
-uint8_t serial_tx_active(serial_t *obj);
-uint8_t serial_rx_active(serial_t *obj);
-
-void uart_enable_tx(serial_t *obj);
-void uart_enable_rx(serial_t *obj);
-
-size_t uart_debug_write(uint8_t *data, uint32_t size);
-
-#endif /* HAL_UART_MODULE_ENABLED  && !HAL_UART_MODULE_ONLY */
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __UART_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

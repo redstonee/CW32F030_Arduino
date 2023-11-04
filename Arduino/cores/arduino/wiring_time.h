@@ -21,7 +21,7 @@
 #define _WIRING_TIME_H_
 
 #include "clock.h"
-#include "dwt.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,6 +60,7 @@ extern void delay(uint32_t ms) ;
  *
  * \param us the number of microseconds to pause (uint32_t)
  */
+
 static inline void delayMicroseconds(uint32_t) __attribute__((always_inline, unused));
 static inline void delayMicroseconds(uint32_t us)
 {
@@ -85,6 +86,8 @@ static inline void delayMicroseconds(uint32_t us)
   } while (nbTicks > elapsedTicks);
 #endif
 }
+
+
 
 #ifdef __cplusplus
 }

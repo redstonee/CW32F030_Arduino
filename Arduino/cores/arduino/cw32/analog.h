@@ -33,6 +33,7 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
+  Modified 1 may 2023 by TempersLee
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -40,23 +41,32 @@
 #define __ANALOG_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32_def.h"
 #include "PeripheralPins.h"
-#include "HardwareTimer.h"
+#include "variant.h"
+
+// #include "HardwareTimer.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+
 /* Exported functions ------------------------------------------------------- */
+#if defined(ADC_MODULE_ENABLED) && !defined(ADC_MODULE_ONLY)
+uint32_t get_adc_channel(PinName pin);
+uint32_t get_adc_internal_channel(PinName pin);
+uint16_t adc_read_value(PinName pin, uint32_t resolution);
+
+#endif
+#if defined(DAC_MODULE_ENABLED) && !defined(DAC_MODULE_ONLY)
+uint32_t get_dac_channel(PinName pin);
 void dac_write_value(PinName pin, uint32_t value, uint8_t do_init);
 void dac_stop(PinName pin);
-uint16_t adc_read_value(PinName pin, uint32_t resolution);
-#if defined(HAL_TIM_MODULE_ENABLED) && !defined(HAL_TIM_MODULE_ONLY)
+#endif
+#if defined(TIM_MODULE_ENABLED) && !defined(TIM_MODULE_ONLY)
 void pwm_start(PinName pin, uint32_t clock_freq, uint32_t value, TimerCompareFormat_t resolution);
 void pwm_stop(PinName pin);
 #endif
-uint32_t get_pwm_channel(PinName pin);
 
 #ifdef __cplusplus
 }
@@ -64,4 +74,4 @@ uint32_t get_pwm_channel(PinName pin);
 
 #endif /* __ANALOG_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

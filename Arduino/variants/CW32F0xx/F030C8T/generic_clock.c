@@ -10,17 +10,24 @@
  *
  *******************************************************************************
  */
-#if defined(ARDUINO_GENERIC_F030C8TX)
 #include "pins_arduino.h"
+#include <cw32yyxx_rcc.h>
+#include <cw32yyxx_flash.h>
 
 /**
-  * @brief  System Clock Configuration
-  * @param  None
-  * @retval None
-  */
-WEAK void SystemClock_Config(void)
+ * @brief  System Clock Configuration
+ * @param  None
+ * @retval None
+ */
+__WEAK void SystemClock_Config(void)
 {
+  RCC_HSI_Enable(RCC_HSIOSC_DIV6);           // HSI = 48MHz, DIV6 -> 8MHz
+  RCC_PLL_Enable(RCC_PLLSOURCE_HSI, 8e6, 8); // 8MHz -> 64MHz
 
+  RCC_HCLKPRS_Config(RCC_HCLK_DIV1);
+  RCC_PCLKPRS_Config(RCC_PCLK_DIV1);
+  RCC_AHBPeriphClk_Enable(RCC_AHB_PERIPH_FLASH, ENABLE);
+  FLASH_SetLatency(FLASH_Latency_3);
+  RCC_SysClk_Switch(RCC_SYSCLKSRC_PLL);
+  RCC_SystemCoreClockUpdate(64e6);
 }
-
-#endif /* ARDUINO_GENERIC_* */

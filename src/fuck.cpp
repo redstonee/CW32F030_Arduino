@@ -1,9 +1,14 @@
-#include<Arduino.h>
+#include <Arduino.h>
 
-void setup(){
-
+void setup()
+{
+    pinMode(PC13, OUTPUT);
 }
 
-void loop(){
-    
+void loop()
+{
+    digitalWrite(PC13,1);
+    delay(100);
+    digitalWrite(PC13,0);
+    delay(100);
 }

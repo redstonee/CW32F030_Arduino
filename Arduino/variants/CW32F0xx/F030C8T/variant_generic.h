@@ -12,6 +12,10 @@
  */
 #pragma once
 
+#define                         ADC_MODULE_ENABLED
+#define                         UART_MODULE_ENABLED
+#define                         SPI_MODULE_ENABLED  
+#define                         I2C_MODULE_ENABLED
 /*----------------------------------------------------------------------------
  *        STM32 pins number
  *----------------------------------------------------------------------------*/
@@ -33,7 +37,7 @@
 #define PA15                    15
 #define PB0                     PIN_A8
 #define PB1                     PIN_A9
-#define PB2                     18
+#define PB2                     PIN_A10
 #define PB3                     19
 #define PB4                     20
 #define PB5                     21
@@ -41,8 +45,8 @@
 #define PB7                     23
 #define PB8                     24
 #define PB9                     25
-#define PB10                    26
-#define PB11                    27
+#define PB10                    PIN_A11
+#define PB11                    PIN_A12
 #define PB12                    28
 #define PB13                    29
 #define PB14                    30
@@ -68,7 +72,7 @@
 #define PB15_ALT2               (PB15 | ALT2)
 
 #define NUM_DIGITAL_PINS        39
-#define NUM_ANALOG_INPUTS       10
+#define NUM_ANALOG_INPUTS       13
 
 // On-board LED pin number
 #ifndef LED_BUILTIN

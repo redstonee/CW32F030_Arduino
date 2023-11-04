@@ -1,9 +1,9 @@
 /*
  *******************************************************************************
- * Copyright (c) 2020, STMicroelectronics
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
  * All rights reserved.
  *
- * This software component is licensed by ST under BSD 3-Clause license,
+ * This software component is licensed by WCH under BSD 3-Clause license,
  * the "License"; You may not use this file except in compliance with the
  * License. You may obtain a copy of the License at:
  *                        opensource.org/licenses/BSD-3-Clause
@@ -536,7 +536,7 @@ enum {
 #endif
 
 /*
- * Each STM32 pin number PYn defined in the variant.h
+ * Each CH32 pin number PYn defined in the variant.h
  * is also the alternate pin number PYn_ALT0
  */
 #ifdef PA0

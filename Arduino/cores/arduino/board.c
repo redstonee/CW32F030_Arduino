@@ -4,12 +4,12 @@
 extern "C" {
 #endif
 
-void __libc_init_array(void);
 
-WEAK void init(void)
+WEAK void pre_init(void)
 {
   hw_config_init();
 }
+
 
 #ifdef __cplusplus
 }

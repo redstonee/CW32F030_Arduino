@@ -136,33 +136,24 @@ PinName analogInputToPinName(uint32_t pin);
                                      pin_in_pinmap(digitalPinToPinName(p), PinMap_SPI_SSEL))
 
 
-#define digitalPinToPort(p)         (get_GPIO_Port(STM_PORT(digitalPinToPinName(p))))
-#define digitalPinToBitMask(p)      (STM_GPIO_PIN(digitalPinToPinName(p)))
+#define digitalPinToPort(p)         (get_GPIO_Port(CW_PORT(digitalPinToPinName(p))))
+#define digitalPinToBitMask(p)      (CW_GPIO_PIN(digitalPinToPinName(p)))
 
-#define analogInPinToBit(p)         (STM_GPIO_PIN(digitalPinToPinName(p)))
+#define analogInPinToBit(p)         (CW_GPIO_PIN(digitalPinToPinName(p)))
 #define portOutputRegister(P)       (&(P->ODR))
 #define portInputRegister(P)        (&(P->IDR))
 
-#define portSetRegister(P)          (&(P->BSRR))
-#if defined(STM32F2xx) || defined(STM32F4xx) || defined(STM32F7xx)
-/* For those series reset are in the high part so << 16U needed */
-#define portClearRegister(P)        (&(P->BSRR))
-#else
-#define portClearRegister(P)        (&(P->BRR))
-#endif
+#define portSetRegister(P)          (&(P->BSHR))
+#define portClearRegister(P)        (&(P->BCR))
 
 
-#if defined(STM32F1xx)
 /*
  * Config registers split in 2 registers:
- * CRL: pin 0..7
- * CRH: pin 8..15
- * Return only CRL
+ * CFGLR: pin 0..7
+ * CFGHR: pin 8..15
+ * Return only CFGLR
  */
-#define portModeRegister(P)         (&(P->CRL))
-#else
-#define portModeRegister(P)         (&(P->MODER))
-#endif
+#define portModeRegister(P)         (&(P->CFGLR))
 #define portConfigRegister(P)       (portModeRegister(P))
 
 
@@ -190,13 +181,15 @@ uint32_t digitalPinToAnalogInput(uint32_t pin);
 
 /* Default Definitions, could be redefined in variant.h */
 #ifndef ADC_RESOLUTION
-  #define ADC_RESOLUTION            10
+  #define ADC_RESOLUTION            12
 #endif
 
+#ifndef DACC_RESOLUTION             
 #define DACC_RESOLUTION             12
+#endif
 
 #ifndef PWM_RESOLUTION
-  #define PWM_RESOLUTION            8
+  #define PWM_RESOLUTION            12
 #endif
 
 _Static_assert((ADC_RESOLUTION > 0) &&(ADC_RESOLUTION <= 32),
