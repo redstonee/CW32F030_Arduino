@@ -11,15 +11,15 @@
  *******************************************************************************
  */
 #include "pins_arduino.h"
-#include <cw32yyxx_rcc.h>
-#include <cw32yyxx_flash.h>
-
+#include "cw32yyxx_rcc.h"
+#include "cw32yyxx_flash.h"
+#include "cw32_def.h"
 /**
  * @brief  System Clock Configuration
  * @param  None
  * @retval None
  */
-__WEAK void SystemClock_Config(void)
+WEAK void SystemClock_Config(void)
 {
   RCC_HSI_Enable(RCC_HSIOSC_DIV6);           // HSI = 48MHz, DIV6 -> 8MHz
   RCC_PLL_Enable(RCC_PLLSOURCE_HSI, 8e6, 8); // 8MHz -> 64MHz

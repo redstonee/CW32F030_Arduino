@@ -44,16 +44,8 @@ extern "C" {
 
 extern uint32_t SystemCoreClock;          // System Clock Frequency (Core Clock)
 extern void SystemInit (void);            // Initialize the system
-//extern void SystemCoreClockUpdate (void); // Update SystemCoreClock variable
+extern void SystemCoreClockUpdate (void); // Update SystemCoreClock variable
 
-/**
- *******************************************************************************
- ** This hook is part of wait loops.
- ******************************************************************************/
-extern void delay1ms(uint32_t u32Cnt);
-extern void delay100us(uint32_t u32Cnt);
-extern void delay10us(uint32_t u32Cnt);
-extern void FirmwareDelay(uint32_t DlyCnt );
 
 extern void memclr(void* pu8Address, uint32_t u32Count);
 

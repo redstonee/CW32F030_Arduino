@@ -26,7 +26,6 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-WEAK uint64_t GetTick(void);
 uint32_t getCurrentMillis(void);
 uint32_t getCurrentMicros(void);
 

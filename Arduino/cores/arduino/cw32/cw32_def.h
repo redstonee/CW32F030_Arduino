@@ -30,6 +30,7 @@
   #error "CW32YYXX chip series is not defined in boards.txt."
 #endif
 
+
 #ifndef F_CPU
   #define F_CPU SystemCoreClock
 #endif
@@ -56,6 +57,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
+
+void SystemClock_Config();
 
 
 #if defined(NDEBUG)
