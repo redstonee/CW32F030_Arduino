@@ -229,14 +229,14 @@ extern "C"
     case AFIO_USART2_ENABLE:
       PA02_AFx_UART2TXD();
       PA03_AFx_UART2RXD();
-      PA04_AFx_UART2CTS();
-      PA05_AFx_UART2RTS();
+      PA01_AFx_UART2RTS();
+      PA00_AFx_UART2CTS();
       break;
     case AFIO_USART2_DISABLE:
       PA02_AFx_GPIO();
       PA03_AFx_GPIO();
-      PA04_AFx_GPIO();
-      PA05_AFx_GPIO();
+      PA01_AFx_GPIO();
+      PA00_AFx_GPIO();
       break;
 
 #ifdef UART3_BASE

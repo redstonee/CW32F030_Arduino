@@ -104,7 +104,6 @@ set(ARDUINO_CORE_SRCS
         # ${ARDUINO_CORE_DIR}/cw32/analog.cpp
         ${ARDUINO_CORE_DIR}/cw32/clock.c
         ${ARDUINO_CORE_DIR}/cw32/cw32_def.c
-        ${ARDUINO_CORE_DIR}/cw32/hw_config.c
         # ${ARDUINO_CORE_DIR}/cw32/interrupt.cpp
         ${ARDUINO_CORE_DIR}/cw32/pinmap.c
         ${ARDUINO_CORE_DIR}/cw32/PortNames.c
@@ -132,7 +131,7 @@ add_compile_definitions(
         VARIANT_H="variant_generic.h"
 )
 
-add_compile_options(--specs=nano.specs -u _printf_float -u _scanf_float)
+add_compile_options(--specs=nano.specs -u _printf_float -u _scanf_float -g)
 
 set(LD_SCRIPT_PATH ${CMAKE_CURRENT_LIST_DIR}/ldscript.ld)
 get_filename_component(LD_SCRIPT_PATH_ABS ${LD_SCRIPT_PATH} ABSOLUTE)

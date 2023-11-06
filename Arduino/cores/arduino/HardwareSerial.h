@@ -25,8 +25,6 @@
 #ifndef HardwareSerial_h
 #define HardwareSerial_h
 
-#if 1
-
 #include <inttypes.h>
 #include "Stream.h"
 #include "uart.h"
@@ -135,26 +133,26 @@ public:
     {
       return write((uint8_t)n);
     }
-    size_t write(const uint8_t *buffer, size_t size);
+    inline size_t write(const uint8_t *buffer, size_t size);
     using Print::write; // pull in write(str) from Print
     operator bool()
     {
       return true;
     }
 
-    void setRx(uint32_t _rx);
-    void setTx(uint32_t _tx);
-    void setRx(PinName _rx);
-    void setTx(PinName _tx);
+    inline void setRx(uint32_t _rx);
+    inline void setTx(uint32_t _tx);
+    inline void setRx(PinName _rx);
+    inline void setTx(PinName _tx);
 
     // Enable HW flow control on RTS, CTS or both
-    void setRts(uint32_t _rts);
-    void setCts(uint32_t _cts);
-    void setRtsCts(uint32_t _rts, uint32_t _cts);
-    void setRts(PinName _rts);
-    void setCts(PinName _cts);
-    void setRtsCts(PinName _rts, PinName _cts);
-    void setHandler(void *handler);
+    inline void setRts(uint32_t _rts);
+    inline void setCts(uint32_t _cts);
+    inline void setRtsCts(uint32_t _rts, uint32_t _cts);
+    inline void setRts(PinName _rts);
+    inline void setCts(PinName _cts);
+    inline void setRtsCts(PinName _rts, PinName _cts);
+    inline void setHandler(void *handler);
   private:
     uint8_t _config;
     unsigned long _baud;
@@ -162,51 +160,30 @@ public:
 };
 
 
-#if defined(UART1)
+#if defined(CW_UART1)
   extern HardwareSerial Serial1;
 #endif
-#if defined(UART2)
+#if defined(CW_UART2)
   extern HardwareSerial Serial2;
 #endif
-#if defined(UART3)
+#if defined(CW_UART3)
   extern HardwareSerial Serial3;
 #endif
-#if defined(UART4) || defined(USART4)
+#if defined(CW_UART4) 
   extern HardwareSerial Serial4;
 #endif
-#if defined(UART5) || defined(USART5)
+#if defined(CW_UART5)
   extern HardwareSerial Serial5;
 #endif
-#if defined(USART6)
+#if defined(CW_USART6)
   extern HardwareSerial Serial6;
 #endif
-#if defined(UART7) || defined(USART7)
+#if defined(CW_UART7)
   extern HardwareSerial Serial7;
 #endif
-#if defined(UART8) || defined(USART8)
+#if defined(CW_UART8) 
   extern HardwareSerial Serial8;
 #endif
-
-
-
-#else
-
-
-
-
-
-
-
-#endif
-
-
-
-
-
-
-
-
-
 
 
 #endif

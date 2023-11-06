@@ -1,29 +1,28 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file    interrupts.c
-  * @brief   Interrupt Service Routines.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2021 CW.
-  * All rights reserved.</center></h2>
-  *
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file    interrupts.c
+ * @brief   Interrupt Service Routines.
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2021 CW.
+ * All rights reserved.</center></h2>
+ *
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "interrupts_cw32f030.h"
 
-
 /******************************************************************************/
-/*           Cortex-M0P Processor Interruption and Exception Handlers          */ 
+/*           Cortex-M0P Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 /**
-  * @brief This function handles Non maskable interrupt.
-  */
+ * @brief This function handles Non maskable interrupt.
+ */
 void NMI_Handler(void)
 {
   /* USER CODE BEGIN NonMaskableInt_IRQn */
@@ -32,8 +31,8 @@ void NMI_Handler(void)
 }
 
 /**
-  * @brief This function handles Hard fault interrupt.
-  */
+ * @brief This function handles Hard fault interrupt.
+ */
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn */
@@ -42,15 +41,14 @@ void HardFault_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_HardFault_IRQn */
-	  
+
     /* USER CODE END W1_HardFault_IRQn */
   }
 }
 
-
 /**
-  * @brief This function handles System service call via SWI instruction.
-  */
+ * @brief This function handles System service call via SWI instruction.
+ */
 void SVC_Handler(void)
 {
   /* USER CODE BEGIN SVCall_IRQn */
@@ -58,17 +56,15 @@ void SVC_Handler(void)
   /* USER CODE END SVCall_IRQn */
 }
 
-
 /**
-  * @brief This function handles Pendable request for system service.
-  */
+ * @brief This function handles Pendable request for system service.
+ */
 void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_IRQn */
 
   /* USER CODE END PendSV_IRQn */
 }
-
 
 /******************************************************************************/
 /* CW030 Peripheral Interrupt Handlers                                        */
@@ -83,7 +79,7 @@ void PendSV_Handler(void)
 void WDT_IRQHandler(void)
 {
   /* USER CODE BEGIN */
-	
+
   /* USER CODE END */
 }
 
@@ -396,8 +392,6 @@ void FAULT_IRQHandler(void)
 
   /* USER CODE END */
 }
-
-
 
 /* USER CODE BEGIN 1 */
 

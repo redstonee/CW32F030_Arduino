@@ -87,10 +87,11 @@ extern "C"
 
   int uart_getc(serial_t *obj, unsigned char *c);
 
-  uint8_t serial_tx_active(serial_t *obj);
-  uint8_t serial_rx_active(serial_t *obj);
+  inline uint8_t serial_tx_active(serial_t *obj);
+  inline uint8_t serial_rx_active(serial_t *obj);
 
   size_t uart_debug_write(uint8_t *data, uint32_t size);
+  size_t uart_write(serial_t *obj, uint8_t *data, uint32_t size);
 
 #else
 

@@ -1,15 +1,14 @@
 #define ARDUINO_MAIN
 
 #include "Arduino.h"
-#include "cw32f030_systick.h"
+#include "board.h"
 
 /*
  * \brief Main entry point of Arduino application
  */
 int main(void)
 {
-    SystemClock_Config();
-    InitTick(RCC_Sysctrl_GetHClkFreq());
+    pre_init();
 
     setup();
 

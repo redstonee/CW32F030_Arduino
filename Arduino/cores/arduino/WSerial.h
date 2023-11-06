@@ -68,22 +68,22 @@
 
 
   #if defined(ENABLE_HWSERIAL1)
-    #if defined(USART1_BASE)
+    #if defined(UART1_BASE)
       #define HAVE_HWSERIAL1
     #endif
   #endif
   #if defined(ENABLE_HWSERIAL2)
-    #if defined(USART2_BASE)
+    #if defined(UART2_BASE)
       #define HAVE_HWSERIAL2
     #endif
   #endif
   #if defined(ENABLE_HWSERIAL3)
-    #if defined(USART3_BASE)
+    #if defined(UART3_BASE)
       #define HAVE_HWSERIAL3
     #endif
   #endif
   #if defined(ENABLE_HWSERIAL4)
-    #if defined(USART4_BASE) || defined(UART4_BASE)
+    #if defined(UART4_BASE)
       #define HAVE_HWSERIAL4
     #endif
   #endif

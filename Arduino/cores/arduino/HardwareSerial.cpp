@@ -60,13 +60,12 @@ void HardwareSerial::begin(unsigned long baud, byte config)
 {
   uint32_t stopbits = 0;
   uint32_t parity = 0;
-  
+
   // Databits can't be modified
   uint32_t databits = 8;
 
   _baud = baud;
   _config = config;
-
 
   if ((config & 0x30) == 0x30)
   {
@@ -134,8 +133,7 @@ int HardwareSerial::read(void)
 
 size_t HardwareSerial::write(const uint8_t *buffer, size_t size)
 {
-
-  return uart_debug_write((uint8_t *)buffer, size);
+  return uart_write(&_serial, (uint8_t *)buffer, size);
 }
 
 size_t HardwareSerial::write(uint8_t c)
@@ -207,44 +205,40 @@ void HardwareSerial::setHandler(void *handler)
 // SerialEvent functions are weak, so when the user doesn't define them,
 // the linker just sets their address to 0 (which is checked below).
 #if defined(HAVE_HWSERIAL1)
-HardwareSerial Serial1(USART1);
+HardwareSerial Serial1(CW_UART21);
 #endif
 
 #if defined(HAVE_HWSERIAL2)
-HardwareSerial Serial2(USART2);
+HardwareSerial Serial2(CW_UART2);
 #endif
 
 #if defined(HAVE_HWSERIAL3)
-HardwareSerial Serial3(USART3);
+HardwareSerial Serial3(CW_UART3);
 #endif
 
 #if defined(HAVE_HWSERIAL4)
-#if defined(USART4)
-HardwareSerial Serial4(USART4);
-#else
-HardwareSerial Serial4(UART4);
-#endif
+HardwareSerial Serial4(CW_UART4);
 #endif
 
 #if defined(HAVE_HWSERIAL5)
 #if defined(UART5)
-HardwareSerial Serial5(UART5);
+HardwareSerial Serial5(CW_UART5);
 #endif
 #endif
 
 #if defined(HAVE_HWSERIAL6)
-HardwareSerial Serial6(USART6);
+HardwareSerial Serial6(CW_UART6);
 #endif
 
 #if defined(HAVE_HWSERIAL7)
 #if defined(UART7)
-HardwareSerial Serial7(UART7);
+HardwareSerial Serial7(CW_UART7);
 #endif
 #endif
 
 #if defined(HAVE_HWSERIAL8)
 #if defined(UART8)
-HardwareSerial Serial8(UART8);
+HardwareSerial Serial8(CW_UART8);
 #endif
 #endif
 #endif // HAVE_HWSERIALx

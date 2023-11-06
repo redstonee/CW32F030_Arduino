@@ -14,6 +14,7 @@
 #include "uart.h"
 #include "Arduino.h"
 #include "PinAF.h"
+#include "cw32yyxx_rcc.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -235,16 +236,17 @@ extern "C"
 
     /* Configure uart */
     uart_handlers[obj->index] = huart;
-    huart->Instance = (USART_TypeDef *)(obj->uart);
+    huart->Instance = obj->uart;
     huart->init.USART_BaudRate = baudrate;
     // huart->init.USART_WordLength = databits;
     huart->init.USART_StopBits = stopbits;
     huart->init.USART_Parity = parity;
     huart->init.USART_Mode = (USART_Mode_Rx | USART_Mode_Tx);
     huart->init.USART_HardwareFlowControl = flow_control;
+    huart->init.USART_UclkFreq = RCC_Sysctrl_GetPClkFreq();
 
     if (uart_rx == NP)
-    {      
+    {
       USART_HalfDuplexCmd(huart->Instance, ENABLE);
     }
 
@@ -262,56 +264,56 @@ extern "C"
     /* Reset UART and disable clock */
     switch (obj->index)
     {
-#if defined(USART1_BASE)
+#if defined(UART1_BASE)
     case UART1_INDEX:
-      RCC_APB2PeriphResetCmd(RCC_APB2Periph_USART1, ENABLE);
-      RCC_APB2PeriphResetCmd(RCC_APB2Periph_USART1, DISABLE);
+      RCC_APBPeriphClk_Enable2(RCC_APB2_PERIPH_UART1, ENABLE);
+      RCC_APBPeriphClk_Enable2(RCC_APB2_PERIPH_UART1, DISABLE);
       break;
 #endif
-#if defined(USART2_BASE)
+#if defined(UART2_BASE)
     case UART2_INDEX:
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART2, ENABLE);
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART2, DISABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART2, ENABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART2, DISABLE);
       break;
 #endif
-#if defined(USART3_BASE)
+#if defined(UART3_BASE)
     case UART3_INDEX:
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART3, ENABLE);
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART3, DISABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART3, ENABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART3, DISABLE);
       break;
 #endif
 #if defined(UART4_BASE)
     case UART4_INDEX:
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART4, ENABLE);
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART4, DISABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART4, ENABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART4, DISABLE);
       break;
 #endif
 
 #if defined(UART5_BASE)
     case UART5_INDEX:
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART5, ENABLE);
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART5, DISABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART5, ENABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART5, DISABLE);
       break;
 #endif
 
 #if defined(UART6_BASE)
     case UART6_INDEX:
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART6, ENABLE);
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART6, DISABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART6, ENABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART6, DISABLE);
       break;
 #endif
 
 #if defined(UART7_BASE)
     case UART7_INDEX:
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART7, ENABLE);
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART7, DISABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART7, ENABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART7, DISABLE);
       break;
 #endif
 
 #if defined(UART8_BASE)
     case UART8_INDEX:
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART8, ENABLE);
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART8, DISABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART8, ENABLE);
+      RCC_APBPeriphClk_Enable1(RCC_APB1_PERIPH_UART8, DISABLE);
       break;
 #endif
     }
@@ -351,12 +353,20 @@ extern "C"
    * @param  size : number of data to write
    * @retval The number of bytes written
    */
+  // size_t uart_debug_write(uint8_t *data, uint32_t size)
+  // {
+  //   serial_t *obj = get_serial_obj(uart_handlers[serial_debug.index]);
+  //   while (size--)
+  //   {
+  //     while (serial_tx_active(obj))
+  //       ;
+  //     USART_SendData_8bit(uart_handlers[serial_debug.index]->Instance, *data++);
+  //     // USART_SendData_8bit(CW_UART2, *data++);
+  //   }
+  //   return size; // it shouled be 0
+  // }
   size_t uart_debug_write(uint8_t *data, uint32_t size)
   {
-    int i;
-    uint32_t tickstart = GetTick();
-    serial_t *obj = NULL;
-
     if (serial_debug.index >= UART_NUM)
     {
       if (DEBUG_UART == NP)
@@ -369,7 +379,7 @@ extern "C"
       {
         if (uart_handlers[serial_debug.index] != NULL)
         {
-          if (DEBUG_UART == uart_handlers[serial_debug.index]->Instance)
+          if (DEBUG_UART == serial_debug.uart)
           {
             break;
           }
@@ -387,12 +397,12 @@ extern "C"
       }
     }
 
-    obj = get_serial_obj(uart_handlers[serial_debug.index]);
+    return uart_write(&serial_debug, data, size);
+  }
 
-    if (!obj)
-    {
-      return 0;
-    }
+  size_t uart_write(serial_t *obj, uint8_t *data, uint32_t size)
+  {
+    uint32_t tickstart = GetTick();
 
     while (serial_tx_active(obj))
     {
@@ -402,12 +412,13 @@ extern "C"
       }
     }
 
-    for (i = 0; i < size; i++)
+    while (size--)
     {
+      USART_SendData_8bit(obj->uart, *data++);
       while (serial_tx_active(obj))
         ;
-      USART_SendData(uart_handlers[serial_debug.index]->Instance, *data++);
     }
+
     return size; // it shouled be 0
   }
 
@@ -419,7 +430,7 @@ extern "C"
    */
   uint8_t serial_rx_active(serial_t *obj)
   {
-    return (USART_GetFlagStatus(uart_handlers[obj->index]->Instance, USART_FLAG_RC) == RESET);
+    return (USART_GetFlagStatus(obj->uart, USART_FLAG_RC) == RESET);
   }
 
   /**
@@ -430,7 +441,7 @@ extern "C"
    */
   uint8_t serial_tx_active(serial_t *obj)
   {
-    return (USART_GetFlagStatus(uart_handlers[obj->index]->Instance, USART_FLAG_TC) == RESET);
+    return (USART_GetFlagStatus(obj->uart, USART_FLAG_TXE) == RESET);
   }
 
   /**
@@ -450,7 +461,7 @@ extern "C"
       return -1;
     }
 
-    *c = (unsigned char)USART_ReceiveData(uart_handlers[obj->index]->Instance);
+    *c = (unsigned char)USART_ReceiveData_8bit(obj->uart);
 
     return 0;
   }
